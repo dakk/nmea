@@ -4,12 +4,12 @@
 
 %token <Coord.ns> NS
 %token <Coord.ew> EW
-/* %token <string> UNIT */
+%token <string> UNIT
 %token <bool> STATUS
 
-%token SPREFIX GPGGA GPRMC
+%token GPGGA GPRMC GPGLL
 %token SLASH COMMA STAR M
-%token EOL EOF
+%token SPREFIX EOL
 
 %start <Sentence.t> sentence
 
@@ -18,13 +18,24 @@
 sentence:
   | SPREFIX GPGGA COMMA nmea_gpgga_sentence EOL   { Sentence.GPGGA $4 }
   | SPREFIX GPRMC COMMA nmea_gprmc_sentence EOL   { Sentence.GPRMC $4 }
+  | SPREFIX GPGLL COMMA nmea_gpgll_sentence EOL   { Sentence.GPGLL $4 }
 
-/* checksum = $18; */
+
+/* $GPGLL,4916.45,N,12311.12,W,225444,A*32 */
+nmea_gpgll_sentence:
+  /* coord       time       status*/
+  | coords COMMA NAT COMMA STATUS checksum
+    { Sentence.({
+        time = Sentence.time_to_unix $3;
+        status = $5;
+        coord = $1;
+    })}
 
 nmea_gpgga_sentence:
-  | NAT COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA M COMMA REAL COMMA M COMMA checksum
+  /* time      coord        quality   sat_n     hdop       alt        M       geoid      M       -          - */
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA M COMMA REAL COMMA M COMMA UNIT COMMA UNIT checksum
     { Sentence.({
-        time = Sentence.time_to_unix $1;
+        time = Sentence.time_to_unix @@ int_of_float $1;
         coord = $3;
         quality = $5;
         sat_n = $7;
@@ -34,9 +45,9 @@ nmea_gpgga_sentence:
     })}
 
 nmea_gprmc_sentence:
-  | NAT COMMA STATUS COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW COMMA checksum
+  | REAL COMMA STATUS COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW COMMA checksum
     { Sentence.({
-        time = Sentence.datetime_to_unix $11 $1;
+        time = Sentence.datetime_to_unix $11 @@ int_of_float $1;
         status = $3;
         coord = $5;
         sog = $7;
@@ -45,8 +56,8 @@ nmea_gprmc_sentence:
     })}
 
 checksum:
-  | HEX  { $1 }
-  | NAT  { int_of_string (Printf.sprintf "0x%d" $1) }
+  | STAR HEX  { $2 }
+  | STAR NAT  { int_of_string (Printf.sprintf "0x%d" $2) }
 
 coords:
   | REAL COMMA NS COMMA REAL COMMA EW

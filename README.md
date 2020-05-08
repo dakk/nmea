@@ -6,6 +6,7 @@ An nmea sentence parser for OCaml.
 
 - GPGGA
 - GPRMC
+- GPGLL
 
 
 ## License

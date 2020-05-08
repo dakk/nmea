@@ -3,9 +3,9 @@ open Sentence;;
 type t = in_channel;;
 
 let parse s = 
-  try 
+  (* try  *)
     Parser.sentence Lexer.token (Lexing.from_string s)
-  with | _ -> raise Invalid_sentence
+  (* with | _ -> raise Invalid_sentence *)
 ;;
 
 let next ch = 

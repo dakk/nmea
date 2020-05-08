@@ -1,7 +1,7 @@
 exception Invalid_sentence
 type mag_var = float * Coord.ew
 
-type gga = {
+type gpgga = {
   time: float;
   coord: Coord.t;
   quality: int;
@@ -11,7 +11,7 @@ type gga = {
   geoid_height: float;
 }
 
-type gll = {
+type gpgll = {
   time: float;
   coord: Coord.t;
   status: bool;
@@ -34,7 +34,7 @@ type gprma = {
   status: bool;
 }
 
-type t = GPGLL of gll | GPGGA of gga | GPRMC of gprmc | GPRRMA of gprma
+type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPRRMA of gprma
 
 val time_to_unix: int -> float
 val datetime_to_unix: int -> int -> float

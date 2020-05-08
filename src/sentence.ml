@@ -1,7 +1,7 @@
 exception Invalid_sentence;;
 type mag_var = float * Coord.ew;;
 
-type gga = {
+type gpgga = {
   time: float;
   coord: Coord.t;
   quality: int;
@@ -11,7 +11,7 @@ type gga = {
   geoid_height: float;
 };;
 
-type gll = {
+type gpgll = {
   time: float;
   coord: Coord.t;
   status: bool;
@@ -34,7 +34,7 @@ type gprma = {
   status: bool;
 };;
 
-type t = GPGLL of gll | GPGGA of gga | GPRMC of gprmc | GPRRMA of gprma
+type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPRRMA of gprma
 
 let time_to_unix t =
   let tm = Unix.time () |> Unix.localtime in
@@ -46,8 +46,8 @@ let time_to_unix t =
 
 let datetime_to_unix d t = 
   let tm = time_to_unix t |> Unix.localtime in
-  let day = t / 10000 in
-  let month = t / 100 - (day * 100) in
-  let year = t - (day * 10000) - (month * 100) in 
+  let day = d / 10000 in
+  let month = d / 100 - (day * 100) in
+  let year = d - (day * 10000) - (month * 100) in 
   { tm with tm_mday= day; tm_mon= month; tm_year= 2000 + year } |> Unix.mktime |> fst
 ;;
