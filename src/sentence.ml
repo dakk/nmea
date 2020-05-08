@@ -1,3 +1,4 @@
+exception Invalid_sentence;;
 type mag_var = float * Coord.ew;;
 
 type gga = {
