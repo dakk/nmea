@@ -7,6 +7,7 @@ let digit = ['0'-'9']
 let real = '-'? ((((digit? digit)? digit)? digit)? digit)? digit '.'? digit+?
 let nat = '-'? (((((((digit? digit)? digit)? digit)? digit)? digit)? digit)? digit)? digit
 
+let letter = ['A'-'Z']
 let hexit = digit | ['A'-'F']
 let hex = hexit hexit
 
@@ -28,6 +29,7 @@ rule token = parse
   | "GPGGA"                     { GPGGA }
   | "GPRMC"                     { GPRMC }
   | "GPGLL"                     { GPGLL }
+  | "GPGSV"                     { GPGSV }
 
   | '/'                         { SLASH }
   | ','                         { COMMA }

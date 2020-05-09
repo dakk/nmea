@@ -34,7 +34,21 @@ type gprma = {
   status: bool;
 }
 
-type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPRRMA of gprma
+type sat = {
+  prn: int;
+  elev_dgr: int;
+  azimuth: int;
+  snr_db: int;
+}
+
+type gpgsv = {
+  msg_n: int;
+  msg_i: int;
+  sv_n: int;
+  sats: sat list;
+}
+
+type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPRRMA of gprma | GPGSV of gpgsv
 
 val time_to_unix: int -> float
 val datetime_to_unix: int -> int -> float
