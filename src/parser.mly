@@ -1,6 +1,7 @@
 %token <int> NAT
 %token <float> REAL
 %token <int> HEX
+%token <string> ID
 
 %token <Coord.ns> NS
 %token <Coord.ew> EW
@@ -21,13 +22,33 @@ sentence:
   | SPREFIX GPGLL COMMA nmea_gpgll_sentence EOL   { Sentence.GPGLL $4 }
   | SPREFIX GPGSV COMMA nmea_gpgsv_sentence EOL   { Sentence.GPGSV $4 }
 
+
+
+sat_info: 
+  | NAT COMMA NAT COMMA NAT COMMA NAT { (Sentence.({ prn = $1; elev_dgr = $3; azimuth = $5; snr_db = $7; })) }
+  | NAT COMMA NAT COMMA NAT COMMA     { (Sentence.({ prn = $1; elev_dgr = $3; azimuth = $5; snr_db = 0;  })) }
+
 nmea_gpgsv_sentence:
-  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA sat_info COMMA sat_info COMMA checksum
+  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA sat_info COMMA sat_info checksum
     { Sentence.({
         msg_n = $1;
         msg_i = $3;
         sv_n = $5;
         sats = [ $7; $9; $11 ];
+    })}
+  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA sat_info COMMA COMMA COMMA COMMA checksum
+    { Sentence.({
+        msg_n = $1;
+        msg_i = $3;
+        sv_n = $5;
+        sats = [ $7; $9 ];
+    })}
+  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA COMMA COMMA COMMA COMMA COMMA COMMA COMMA checksum
+    { Sentence.({
+        msg_n = $1;
+        msg_i = $3;
+        sv_n = $5;
+        sats = [ $7 ];
     })}
 
 
@@ -43,8 +64,9 @@ nmea_gpgll_sentence:
     })}
 
 nmea_gpgga_sentence:
+  /* "$GPGGA,134658.00,5106.9792,N,11402.3003,W,2,09,1.0,1048.47,M,-16.27,M,08,AAAA*60" */
   /* time      coord        quality   sat_n     hdop       alt        M       geoid      M       -          - */
-  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA M COMMA REAL COMMA M COMMA UNIT COMMA UNIT checksum
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA M COMMA REAL COMMA M COMMA NAT COMMA ID checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $1;
         coord = $3;
@@ -53,6 +75,31 @@ nmea_gpgga_sentence:
         hdop = $9;
         alt = $11;
         geoid_height = $15;
+        station_id = "";
+    })}
+  /* "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47" */
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA M COMMA REAL COMMA M COMMA COMMA checksum
+    { Sentence.({
+        time = Sentence.time_to_unix @@ int_of_float $1;
+        coord = $3;
+        quality = $5;
+        sat_n = $7;
+        hdop = $9;
+        alt = $11;
+        geoid_height = $15;
+        station_id = "";
+    })}
+  /* "$GPGGA,083224.00,,,,,0,00,99.99,,,,,,*69" */
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA COMMA COMMA COMMA COMMA COMMA checksum
+    { Sentence.({
+        time = Sentence.time_to_unix @@ int_of_float $1;
+        coord = $3;
+        quality = $5;
+        sat_n = $7;
+        hdop = 0.0;
+        alt = 0.0;
+        geoid_height = 0.0;
+        station_id = "";
     })}
 
 /* $GPRMC,083344.00,V,,,,,,,090520,,,N*7B */
@@ -76,15 +123,6 @@ nmea_gprmc_sentence:
         mag_var = (0.0, E);
     })}
 
-sat_info: 
-  | NAT COMMA NAT COMMA NAT COMMA NAT {
-    (Sentence.({
-      prn = $1;
-      elev_dgr = $3;
-      azimuth = $5;
-      snr_db = $7;
-    }))
-  }
 
 checksum:
   | COMMA? NS? STAR HEX  { $4 }

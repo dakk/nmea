@@ -9,6 +9,7 @@ type gpgga = {
   hdop: float;
   alt: float;
   geoid_height: float;
+  station_id: string;
 };;
 
 type gpgll = {

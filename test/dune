@@ -1,6 +1,12 @@
 (executable
  (name test)
- (libraries oUnit nmea))
+ (libraries oUnit nmea)
+ (modules ("test")))
+
+(executable
+ (name test_stream)
+ (libraries oUnit nmea)
+ (modules ("test_stream")))
 
 (env
   (dev

@@ -6,5 +6,7 @@ clean:
 	rm -rf _build
 runtest:
 	./_build/default/test/test.exe
+runstest:
+	./_build/default/test/test_stream.exe
 pin: 
 	opam pin add nmea . -n --working-dir && opam remove nmea && opam install nmea --working-dir
