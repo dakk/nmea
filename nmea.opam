@@ -3,7 +3,7 @@ name: "nmea"
 version: "0.1"
 synopsis: "nmea parser"
 description: """
-NMEA data parser library for OCaml
+NMEA sentence parser library for OCaml
 """
 maintainer: "Davide Gessa <gessadavide@gmail.com>"
 authors: [

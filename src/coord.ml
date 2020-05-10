@@ -1,9 +1,9 @@
-type ns = N | S
-type ew = E | W
-type lat = float * ns
-type lng = float * ew
+type ns = N | S;;
+type ew = E | W;;
+type lat = float * ns;;
+type lng = float * ew;;
 
-type t = lat * lng
+type t = lat * lng;;
 
 let dm_to_d v = 
   let dgr = floor @@ v /. 100. in

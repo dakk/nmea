@@ -1,5 +1,5 @@
 # NMEA sentence parser
-An nmea sentence parser for OCaml.
+An NMEA sentence parser for OCaml.
 
 
 ## Supported sentences
@@ -8,6 +8,13 @@ An nmea sentence parser for OCaml.
 - GPRMC
 - GPGLL
 - GPGSV
+
+## Roadmap
+
+1. ~~GPS related sentences~~
+2. Wind / Heading related sentences
+3. WP related sentences
+4. AIS related sentences
 
 
 ## License
