@@ -6,7 +6,7 @@
 let digit = ['0'-'9']
 let letter = ['A'-'Z']
 let id = letter letter letter letter
-let real = '-'? ((((digit? digit)? digit)? digit)? digit)? digit ('.' digit+)?
+let real = '-'? ((((((digit? digit)? digit)? digit)? digit)? digit)? digit)? digit '.' digit+
 let nat = '-'? (((((((digit? digit)? digit)? digit)? digit)? digit)? digit)? digit)? digit
 
 let hexit = digit | ['A'-'F']

@@ -9,7 +9,7 @@
 %token <bool> STATUS
 
 %token GPGGA GPRMC GPGLL GPGSV
-%token SLASH COMMA STAR M
+%token SLASH COMMA STAR
 %token SPREFIX EOL
 
 %start <Sentence.t> sentence
@@ -66,7 +66,19 @@ nmea_gpgll_sentence:
 nmea_gpgga_sentence:
   /* "$GPGGA,134658.00,5106.9792,N,11402.3003,W,2,09,1.0,1048.47,M,-16.27,M,08,AAAA*60" */
   /* time      coord        quality   sat_n     hdop       alt        M       geoid      M       -          - */
-  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA M COMMA REAL COMMA M COMMA NAT COMMA ID checksum
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA UNIT COMMA REAL COMMA UNIT COMMA NAT COMMA ID checksum
+    { Sentence.({
+        time = Sentence.time_to_unix @@ int_of_float $1;
+        coord = $3;
+        quality = $5;
+        sat_n = $7;
+        hdop = $9;
+        alt = $11;
+        geoid_height = $15;
+        station_id = "";
+    })}
+  /* "$GPGGA,100412.326,5231.139,N,01324.930,E,1,12,1.0,0.0,M,0.0,M,,*6F" */
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA UNIT COMMA REAL COMMA UNIT COMMA COMMA checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $1;
         coord = $3;
@@ -78,9 +90,9 @@ nmea_gpgga_sentence:
         station_id = "";
     })}
   /* "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47" */
-  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA M COMMA REAL COMMA M COMMA COMMA checksum
+  | NAT COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA UNIT COMMA REAL COMMA UNIT COMMA COMMA checksum
     { Sentence.({
-        time = Sentence.time_to_unix @@ int_of_float $1;
+        time = Sentence.time_to_unix $1;
         coord = $3;
         quality = $5;
         sat_n = $7;
@@ -104,7 +116,7 @@ nmea_gpgga_sentence:
 
 /* $GPRMC,083344.00,V,,,,,,,090520,,,N*7B */
 nmea_gprmc_sentence:
-  | REAL COMMA STATUS COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW COMMA checksum
+  | REAL COMMA STATUS COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW checksum
     { Sentence.({
         time = Sentence.datetime_to_unix $11 @@ int_of_float $1;
         status = $3;
