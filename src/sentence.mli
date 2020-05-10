@@ -27,14 +27,6 @@ type gprmc = {
   status: bool;
 }
 
-type gprma = {
-  coord: Coord.t;
-  sog: float;
-  cog: float;
-  mag_var: mag_var;
-  status: bool;
-}
-
 type sat = {
   prn: int;
   elev_dgr: int;
@@ -49,7 +41,23 @@ type gpgsv = {
   sats: sat list;
 }
 
-type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPRRMA of gprma | GPGSV of gpgsv
+type gpgsa = {
+  auto: bool;
+  fix: int;
+  prns: int list;
+  pdop: float;
+  hdop: float;
+  vdop: float;
+}
+
+type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPGSV of gpgsv | GPGSA of gpgsa
+(** sentence type *)
+
+val to_string: t -> string
+(** [to_string s] returns an human readable string for the given sentence *)
 
 val time_to_unix: int -> float
+(** [time_to_unix t] transforms nmea time format to unixtime *)
+
 val datetime_to_unix: int -> int -> float
+(** [datetime_to_unix d t] transforms nmea datetime format to unixtime *)

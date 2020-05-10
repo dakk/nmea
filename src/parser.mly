@@ -6,10 +6,9 @@
 %token <Coord.ns> NS
 %token <Coord.ew> EW
 %token <string> UNIT
-%token <bool> STATUS
 
-%token GPGGA GPRMC GPGLL GPGSV
-%token SLASH COMMA STAR
+%token GPGGA GPRMC GPGLL GPGSV GPGSA
+%token COMMA STAR SLASH
 %token SPREFIX EOL
 
 %start <Sentence.t> sentence
@@ -21,7 +20,23 @@ sentence:
   | SPREFIX GPRMC COMMA nmea_gprmc_sentence EOL   { Sentence.GPRMC $4 }
   | SPREFIX GPGLL COMMA nmea_gpgll_sentence EOL   { Sentence.GPGLL $4 }
   | SPREFIX GPGSV COMMA nmea_gpgsv_sentence EOL   { Sentence.GPGSV $4 }
+  | SPREFIX GPGSA COMMA nmea_gpgsa_sentence EOL   { Sentence.GPGSA $4 }
 
+
+
+nmea_gpgsa_sentence:
+/* "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30"; */
+  | UNIT COMMA NAT COMMA
+    NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA 
+    REAL COMMA REAL COMMA REAL checksum
+    { Sentence.({
+      auto = ($1 = "A");
+      fix = $3;
+      prns = [$5;$7;$9;$11;$13;$15;$17;$19;$21;$23;$25;$27];
+      pdop = $29;
+      hdop = $31;
+      vdop = $33;
+    })}
 
 
 sat_info: 
@@ -56,10 +71,10 @@ nmea_gpgsv_sentence:
 /* $GPGLL,,,,,082031.00,V,N*42 */
 nmea_gpgll_sentence:
   /* coord       time       status*/
-  | coords COMMA REAL COMMA STATUS checksum
+  | coords COMMA REAL COMMA UNIT checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $3;
-        status = $5;
+        status = $5 = "A";
         coord = $1;
     })}
 
@@ -116,19 +131,19 @@ nmea_gpgga_sentence:
 
 /* $GPRMC,083344.00,V,,,,,,,090520,,,N*7B */
 nmea_gprmc_sentence:
-  | REAL COMMA STATUS COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW checksum
+  | REAL COMMA UNIT COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW checksum
     { Sentence.({
         time = Sentence.datetime_to_unix $11 @@ int_of_float $1;
-        status = $3;
+        status = $3 = "A";
         coord = $5;
         sog = $7;
         cmg = $9;
         mag_var = Coord.parse_lng $13 $15;
     })}
-  | REAL COMMA STATUS COMMA coords COMMA COMMA COMMA NAT COMMA COMMA COMMA checksum
+  | REAL COMMA UNIT COMMA coords COMMA COMMA COMMA NAT COMMA COMMA COMMA checksum
     { Sentence.({
         time = Sentence.datetime_to_unix $9 (int_of_float $1);
-        status = $3;
+        status = $3 = "A";
         coord = $5;
         sog = 0.0;
         cmg = 0.0;

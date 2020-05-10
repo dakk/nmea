@@ -1,18 +1,14 @@
 open Sentence;;
 
-type t = in_channel;;
-
 let parse s = 
-  (* try  *)
+  try 
     Parser.sentence Lexer.token (Lexing.from_string s)
-  (* with | _ -> raise Invalid_sentence *)
+  with | _ -> raise Invalid_sentence
 ;;
 
-let next ch = 
-  try 
-    Some (parse @@ input_line ch)
-  with | _ -> None
-;;
+let parse_opt s = try Some(parse s) with | _ -> None;;
+
+let next ch = parse_opt @@ input_line ch;;
 
 let next_coord ch = 
   match next ch with

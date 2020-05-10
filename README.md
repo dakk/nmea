@@ -2,12 +2,26 @@
 An NMEA sentence parser for OCaml.
 
 
+## Install
+
+```opam install nmea```
+
+## Usage
+
+```ocaml
+let rec loop_coord ch = match Nmea.Parse.next_coord with
+| None -> ()
+| Some(c) -> Printf.printf "Position: %s\n" c; loop_coord ch
+in loop_coord (open_in "/dev/ttyACM0");;
+```
+
 ## Supported sentences
 
-- GPGGA
-- GPRMC
-- GPGLL
-- GPGSV
+- GPGGA: Essential fix data which provide 3D location and accuracy data
+- GPRMC: Recommended Minimum GPS PVT
+- GPGLL: Geographic Latitude and Longitude
+- GPGSV: Satellites in View
+- GPGSA: GPS DOP and active satellites
 
 ## Roadmap
 

@@ -27,14 +27,6 @@ type gprmc = {
   status: bool;
 };;
 
-type gprma = {
-  coord: Coord.t;
-  sog: float;
-  cog: float;
-  mag_var: mag_var;
-  status: bool;
-};;
-
 type sat = {
   prn: int;
   elev_dgr: int;
@@ -49,7 +41,24 @@ type gpgsv = {
   sats: sat list;
 };;
 
-type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPRRMA of gprma | GPGSV of gpgsv;;
+type gpgsa = {
+  auto: bool;
+  fix: int;
+  prns: int list;
+  pdop: float;
+  hdop: float;
+  vdop: float;
+};;
+
+type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPGSV of gpgsv | GPGSA of gpgsa;;
+
+let to_string s = match s with 
+| GPGLL s -> Printf.sprintf "GPGLL(%s)" (Coord.to_string s.coord);
+| GPGGA s -> Printf.sprintf "GPGGA(%s)" (Coord.to_string s.coord);
+| GPRMC s -> Printf.sprintf "GPRMC(%s)" (Coord.to_string s.coord);
+| GPGSV s -> Printf.sprintf "GPGSV()"
+| GPGSA s -> Printf.sprintf "GPGSA()"
+;;
 
 let time_to_unix t =
   let tm = Unix.time () |> Unix.localtime in

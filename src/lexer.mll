@@ -23,15 +23,19 @@ rule token = parse
   | 'E'                         { EW E }
   | 'W'                         { EW W }
   | 'M'                         { UNIT (Lexing.lexeme lexbuf) }
-  | 'A'                         { STATUS true }
-  | 'V'                         { STATUS false }
-  | 'D'                         { STATUS true }
+  | 'A'                         { UNIT (Lexing.lexeme lexbuf) } 
+  (* { STATUS true } *)
+  | 'V'                         { UNIT (Lexing.lexeme lexbuf) }
+   (* { STATUS false } *)
+  | 'D'                         { UNIT (Lexing.lexeme lexbuf) }
+  (* { STATUS true } *)
 
   | '$'                         { SPREFIX }
   | "GPGGA"                     { GPGGA }
   | "GPRMC"                     { GPRMC }
   | "GPGLL"                     { GPGLL }
   | "GPGSV"                     { GPGSV }
+  | "GPGSA"                     { GPGSA }
 
   | '/'                         { SLASH }
   | ','                         { COMMA }

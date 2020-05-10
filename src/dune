@@ -1,7 +1,7 @@
 (library
  (public_name nmea)
  (name nmea)
- (modules ("coord" "nmea_stream" "sentence" "parser" "lexer")))
+ (modules ("coord" "parse" "sentence" "parser" "lexer")))
 
 (ocamllex lexer)
 

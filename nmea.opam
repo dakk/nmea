@@ -1,6 +1,6 @@
 opam-version: "2.0"
 name: "nmea"
-version: "0.1"
+version: "0.1.2"
 synopsis: "nmea parser"
 description: """
 NMEA sentence parser library for OCaml
