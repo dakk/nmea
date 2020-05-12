@@ -9,6 +9,7 @@
 %token <string> UNIT
 
 %token GGA RMC GLL GSV GSA GP
+%token ZDA
 %token VDM VDO
 %token HDT HDM HDG
 %token COMMA STAR SLASH
@@ -27,6 +28,7 @@ sentence:
   | SPREFIX HDT COMMA nmea_hdtm_sentence EOL   { Sentence.HDT $4 }
   | SPREFIX HDM COMMA nmea_hdtm_sentence EOL   { Sentence.HDM $4 }
   | SPREFIX HDG COMMA nmea_hdg_sentence EOL    { Sentence.HDG $4 }
+  | SPREFIX ZDA COMMA nmea_zda_sentence EOL    { Sentence.ZDA $4 }
 
 //   | APREFIX AI VDM COMMA nmea_vdm_sentence EOL   { Sentence.AIVDM $4 }
 //   | APREFIX AI VDO COMMA nmea_vdo_sentence EOL   { Sentence.AIVDO $4 }
@@ -36,6 +38,16 @@ sentence:
 
 // nmea_avido_sentence:
 	// !AIVDO,1,1,,,B39i>1000nTu;gQAlBj:wwS5kP06,0*5D
+
+
+
+// "$GPZDA,172809.456,12,07,1996,00,00*45"
+nmea_zda_sentence:
+  | REAL COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT checksum 
+	{ Sentence.({
+		tz = $3;
+		time = Sentence.datetime_to_unix2 $5 $7 $9 @@ int_of_float $1;
+	})}
 
 // $HCHDT,271.1,T*2C
 nmea_hdtm_sentence:

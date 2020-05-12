@@ -57,7 +57,13 @@ type hdg = {
 	mag_var: mag_var;
 }
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float | HDG of hdg
+type zda = {
+	time: float;
+	tz: int;
+}
+
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float 
+	| HDG of hdg | ZDA of zda
 (** sentence type *)
 
 val to_string: t -> string
@@ -68,3 +74,6 @@ val time_to_unix: int -> float
 
 val datetime_to_unix: int -> int -> float
 (** [datetime_to_unix d t] transforms nmea datetime format to unixtime *)
+
+val datetime_to_unix2: int -> int -> int -> int -> float
+(** [datetime_to_unix day month year t] transforms nmea datetime format to unixtime *)

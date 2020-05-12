@@ -57,7 +57,13 @@ type hdg = {
 	mag_var: mag_var;
 };;
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float | HDG of hdg;;
+type zda = {
+	time: float;
+	tz: int;
+}
+
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float 
+	| HDG of hdg | ZDA of zda;;
 
 let to_string s = match s with 
 | GLL s -> Printf.sprintf "GLL(%s)" (Coord.to_string s.coord);
@@ -68,6 +74,7 @@ let to_string s = match s with
 | HDT s -> Printf.sprintf "HDT(%f)" s
 | HDM s -> Printf.sprintf "HDM(%f)" s
 | HDG s -> Printf.sprintf "HDG(%f)" s.hdg
+| ZDA s -> Printf.sprintf "HDG(%f, %d)" s.time s.tz
 ;;
 
 let time_to_unix t =
@@ -84,4 +91,9 @@ let datetime_to_unix d t =
   let month = d / 100 - (day * 100) in
   let year = d - (day * 10000) - (month * 100) in 
   { tm with tm_mday= day; tm_mon= month; tm_year= 2000 + year } |> Unix.mktime |> fst
+;;
+
+let datetime_to_unix2 day month year t = 
+  let tm = time_to_unix t |> Unix.localtime in
+  { tm with tm_mday= day; tm_mon= month; tm_year= year } |> Unix.mktime |> fst
 ;;

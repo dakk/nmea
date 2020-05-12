@@ -39,14 +39,16 @@ rule token = parse
   | "HCHDM"						{ HDM }
   | "HCHDG"						{ HDG }
 
+  | "GPZDA"                    	{ ZDA }
+
   | "GPGGA"                    	{ GGA }
   | "GPRMC"                    	{ RMC }
   | "GPGLL"                    	{ GLL }
   | "GPGSV"                    	{ GSV }
   | "GPGSA"                   	{ GSA }
 
-  | "VDM"              			{ VDM }
-  | "VDO"                     	{ VDO }
+  | "AIVDM"              		{ VDM }
+  | "AIVDO"                    	{ VDO }
 
   | '/'                         { SLASH }
   | ','                         { COMMA }

@@ -25,6 +25,9 @@ in loop_coord (open_in "/dev/ttyACM0");;
 - --HDT: true heading
 - --HDM: magnetic heading
 - --HDG: magnetic heading, deviation and variation
+- --ZDA: Time & Date with timezone
+
+https://www.tronico.fi/OH6NT/docs/NMEA0183.pdf
 
 ## Roadmap
 
