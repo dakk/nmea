@@ -24,22 +24,26 @@ rule token = parse
   | 'W'                         { EW W }
   | 'M'                         { UNIT (Lexing.lexeme lexbuf) }
   | 'A'                         { UNIT (Lexing.lexeme lexbuf) } 
-  (* { STATUS true } *)
   | 'V'                         { UNIT (Lexing.lexeme lexbuf) }
-   (* { STATUS false } *)
-  | 'D'                         { UNIT (Lexing.lexeme lexbuf) }
-  (* { STATUS true } *)
+  | 'V'                         { UNIT (Lexing.lexeme lexbuf) }
+  | 'T'                         { UNIT (Lexing.lexeme lexbuf) }
 
   | '$'                         { SPREFIX }
   | '!'                         { APREFIX }
-  | "GP"						{ GP }
-  | "GGA"                     	{ GGA }
-  | "RMC"                     	{ RMC }
-  | "GLL"                     	{ GLL }
-  | "GSV"                     	{ GSV }
-  | "GSA"                     	{ GSA }
 
-  | "AI"						{ AI }
+  (* | "HC"						{ TALKER "HC" }
+  | "GP"						{ TALKER "GP" }
+  | "AI"						{ TALKER "AI" } *)
+
+  | "HCHDT"						{ HDT }
+  | "HCHDM"						{ HDM }
+
+  | "GPGGA"                    	{ GGA }
+  | "GPRMC"                    	{ RMC }
+  | "GPGLL"                    	{ GLL }
+  | "GPGSV"                    	{ GSV }
+  | "GPGSA"                   	{ GSA }
+
   | "VDM"              			{ VDM }
   | "VDO"                     	{ VDO }
 

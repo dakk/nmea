@@ -50,7 +50,7 @@ type gsa = {
   vdop: float;
 };;
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa;;
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float;;
 
 let to_string s = match s with 
 | GLL s -> Printf.sprintf "GLL(%s)" (Coord.to_string s.coord);
@@ -58,6 +58,8 @@ let to_string s = match s with
 | RMC s -> Printf.sprintf "RMC(%s)" (Coord.to_string s.coord);
 | GSV s -> Printf.sprintf "GSV()"
 | GSA s -> Printf.sprintf "GSA()"
+| HDT s -> Printf.sprintf "HDT(%f)" s
+| HDM s -> Printf.sprintf "HDM(%f)" s
 ;;
 
 let time_to_unix t =

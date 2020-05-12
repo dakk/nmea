@@ -17,18 +17,21 @@ in loop_coord (open_in "/dev/ttyACM0");;
 
 ## Supported sentences
 
-- GPGGA: Essential fix data which provide 3D location and accuracy data
-- GPRMC: Recommended Minimum GPS PVT
-- GPGLL: Geographic Latitude and Longitude
-- GPGSV: Satellites in View
-- GPGSA: GPS DOP and active satellites
+- --GGA: Essential fix data which provide 3D location and accuracy data
+- --RMC: Recommended Minimum GPS PVT
+- --GLL: Geographic Latitude and Longitude
+- --GSV: Satellites in View
+- --GSA: GPS DOP and active satellites
+- --HDT: true heading
+- --HDM: magnetic heading
 
 ## Roadmap
 
 1. ~~GPS related sentences~~
-2. Wind / Heading related sentences
-3. WP related sentences
-4. AIS related sentences
+2. Heading related sentences
+3. Wind related sentences
+4. WP related sentences
+5. AIS related sentences
 
 
 ## License

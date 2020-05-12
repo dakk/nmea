@@ -2,13 +2,15 @@
 %token <float> REAL
 %token <int> HEX
 %token <string> ID
+// %token <string> TALKER
 
 %token <Coord.ns> NS
 %token <Coord.ew> EW
 %token <string> UNIT
 
-%token GP GGA RMC GLL GSV GSA 
-%token AI VDM VDO
+%token GGA RMC GLL GSV GSA GP
+%token VDM VDO
+%token HDT HDM
 %token COMMA STAR SLASH
 %token SPREFIX APREFIX EOL
 
@@ -17,11 +19,13 @@
 %%
 
 sentence:
-  | SPREFIX GP GGA COMMA nmea_gga_sentence EOL   { Sentence.GGA $5 }
-  | SPREFIX GP RMC COMMA nmea_rmc_sentence EOL   { Sentence.RMC $5 }
-  | SPREFIX GP GLL COMMA nmea_gll_sentence EOL   { Sentence.GLL $5 }
-  | SPREFIX GP GSV COMMA nmea_gsv_sentence EOL   { Sentence.GSV $5 }
-  | SPREFIX GP GSA COMMA nmea_gsa_sentence EOL   { Sentence.GSA $5 }
+  | SPREFIX GGA COMMA nmea_gga_sentence EOL    { Sentence.GGA $4 }
+  | SPREFIX RMC COMMA nmea_rmc_sentence EOL    { Sentence.RMC $4 }
+  | SPREFIX GLL COMMA nmea_gll_sentence EOL    { Sentence.GLL $4 }
+  | SPREFIX GSV COMMA nmea_gsv_sentence EOL    { Sentence.GSV $4 }
+  | SPREFIX GSA COMMA nmea_gsa_sentence EOL    { Sentence.GSA $4 }
+  | SPREFIX HDT COMMA nmea_hdtm_sentence EOL   { Sentence.HDT $4 }
+  | SPREFIX HDM COMMA nmea_hdtm_sentence EOL   { Sentence.HDM $4 }
 
 //   | APREFIX AI VDM COMMA nmea_vdm_sentence EOL   { Sentence.AIVDM $4 }
 //   | APREFIX AI VDO COMMA nmea_vdo_sentence EOL   { Sentence.AIVDO $4 }
@@ -32,6 +36,10 @@ sentence:
 // nmea_avido_sentence:
 	// !AIVDO,1,1,,,B39i>1000nTu;gQAlBj:wwS5kP06,0*5D
 
+// $HCHDT,271.1,T*2C
+nmea_hdtm_sentence:
+  | REAL COMMA UNIT checksum 
+	{ $1 }
 
 nmea_gsa_sentence:
 /* "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30"; */

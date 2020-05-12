@@ -50,7 +50,7 @@ type gsa = {
   vdop: float;
 }
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float
 (** sentence type *)
 
 val to_string: t -> string

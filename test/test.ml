@@ -1,5 +1,9 @@
 open OUnit2;;
 
+let hc_data = [
+	"$HCHDT,271.1,T*2C"
+];;
+
 let gp_data = [
   "$GPGGA,100412.326,5231.139,N,01324.930,E,1,12,1.0,0.0,M,0.0,M,,*6F";
   "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47";
@@ -53,6 +57,7 @@ let rec loop_parse ch n octx = if n = 0 then () else
 let suite = "nmea" >::: [] 
   @ [ "stream" >:: loop_parse (open_in "test/data.txt") 6 ]
   @ [ "gll_coord" >:: gll_cord_test "$GPGLL,3013.09137,N,00908.43818,E,075602.00,A,A*6C" ((30.218190,N), (9.140636,E))]
-  @ List.mapi (fun i x -> (Printf.sprintf "parse_gp_test.%d" i) >:: parse_test x) gp_data;;
+  @ List.mapi (fun i x -> (Printf.sprintf "parse_gp_test.%d" i) >:: parse_test x) gp_data
+  @ List.mapi (fun i x -> (Printf.sprintf "parse_hc_test.%d" i) >:: parse_test x) hc_data;;
 
 let () = run_test_tt_main suite;;
