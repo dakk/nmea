@@ -1,7 +1,7 @@
 exception Invalid_sentence;;
 type mag_var = float * Coord.ew;;
 
-type gpgga = {
+type gga = {
   time: float;
   coord: Coord.t;
   quality: int;
@@ -12,13 +12,13 @@ type gpgga = {
   station_id: string;
 };;
 
-type gpgll = {
+type gll = {
   time: float;
   coord: Coord.t;
   status: bool;
 };;
 
-type gprmc = {
+type rmc = {
   time: float;
   coord: Coord.t;
   sog: float;
@@ -34,14 +34,14 @@ type sat = {
   snr_db: int;
 };;
 
-type gpgsv = {
+type gsv = {
   msg_n: int;
   msg_i: int;
   sv_n: int;
   sats: sat list;
 };;
 
-type gpgsa = {
+type gsa = {
   auto: bool;
   fix: int;
   prns: int list;
@@ -50,14 +50,14 @@ type gpgsa = {
   vdop: float;
 };;
 
-type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPGSV of gpgsv | GPGSA of gpgsa;;
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa;;
 
 let to_string s = match s with 
-| GPGLL s -> Printf.sprintf "GPGLL(%s)" (Coord.to_string s.coord);
-| GPGGA s -> Printf.sprintf "GPGGA(%s)" (Coord.to_string s.coord);
-| GPRMC s -> Printf.sprintf "GPRMC(%s)" (Coord.to_string s.coord);
-| GPGSV s -> Printf.sprintf "GPGSV()"
-| GPGSA s -> Printf.sprintf "GPGSA()"
+| GLL s -> Printf.sprintf "GLL(%s)" (Coord.to_string s.coord);
+| GGA s -> Printf.sprintf "GGA(%s)" (Coord.to_string s.coord);
+| RMC s -> Printf.sprintf "RMC(%s)" (Coord.to_string s.coord);
+| GSV s -> Printf.sprintf "GSV()"
+| GSA s -> Printf.sprintf "GSA()"
 ;;
 
 let time_to_unix t =

@@ -7,24 +7,33 @@
 %token <Coord.ew> EW
 %token <string> UNIT
 
-%token GPGGA GPRMC GPGLL GPGSV GPGSA
+%token GP GGA RMC GLL GSV GSA 
+%token AI VDM VDO
 %token COMMA STAR SLASH
-%token SPREFIX EOL
+%token SPREFIX APREFIX EOL
 
 %start <Sentence.t> sentence
 
 %%
 
 sentence:
-  | SPREFIX GPGGA COMMA nmea_gpgga_sentence EOL   { Sentence.GPGGA $4 }
-  | SPREFIX GPRMC COMMA nmea_gprmc_sentence EOL   { Sentence.GPRMC $4 }
-  | SPREFIX GPGLL COMMA nmea_gpgll_sentence EOL   { Sentence.GPGLL $4 }
-  | SPREFIX GPGSV COMMA nmea_gpgsv_sentence EOL   { Sentence.GPGSV $4 }
-  | SPREFIX GPGSA COMMA nmea_gpgsa_sentence EOL   { Sentence.GPGSA $4 }
+  | SPREFIX GP GGA COMMA nmea_gga_sentence EOL   { Sentence.GGA $5 }
+  | SPREFIX GP RMC COMMA nmea_rmc_sentence EOL   { Sentence.RMC $5 }
+  | SPREFIX GP GLL COMMA nmea_gll_sentence EOL   { Sentence.GLL $5 }
+  | SPREFIX GP GSV COMMA nmea_gsv_sentence EOL   { Sentence.GSV $5 }
+  | SPREFIX GP GSA COMMA nmea_gsa_sentence EOL   { Sentence.GSA $5 }
+
+//   | APREFIX AI VDM COMMA nmea_vdm_sentence EOL   { Sentence.AIVDM $4 }
+//   | APREFIX AI VDO COMMA nmea_vdo_sentence EOL   { Sentence.AIVDO $4 }
+
+// nmea_avidm_sentence:
 
 
+// nmea_avido_sentence:
+	// !AIVDO,1,1,,,B39i>1000nTu;gQAlBj:wwS5kP06,0*5D
 
-nmea_gpgsa_sentence:
+
+nmea_gsa_sentence:
 /* "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30"; */
   | UNIT COMMA NAT COMMA
     NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA 
@@ -43,7 +52,7 @@ sat_info:
   | NAT COMMA NAT COMMA NAT COMMA NAT { (Sentence.({ prn = $1; elev_dgr = $3; azimuth = $5; snr_db = $7; })) }
   | NAT COMMA NAT COMMA NAT COMMA     { (Sentence.({ prn = $1; elev_dgr = $3; azimuth = $5; snr_db = 0;  })) }
 
-nmea_gpgsv_sentence:
+nmea_gsv_sentence:
   | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA sat_info COMMA sat_info checksum
     { Sentence.({
         msg_n = $1;
@@ -77,7 +86,7 @@ nmea_gpgsv_sentence:
 /* $GPGLL,4916.45,N,12311.12,W,225444,A*32 */
 /* $GPGLL,,,,,082031.00,V,N*42 */
 /* $GPGLL,3913.09137,N,00908.43818,E,075602.00,A,A*6C */
-nmea_gpgll_sentence:
+nmea_gll_sentence:
   /* coord       time       status*/
   | coords COMMA REAL COMMA UNIT checksum
     { Sentence.({
@@ -92,7 +101,7 @@ nmea_gpgll_sentence:
         coord = $1;
     })}
 
-nmea_gpgga_sentence:
+nmea_gga_sentence:
   /* "$GPGGA,134658.00,5106.9792,N,11402.3003,W,2,09,1.0,1048.47,M,-16.27,M,08,AAAA*60" */
   /* time      coord        quality   sat_n     hdop       alt        M       geoid      M       -          - */
   | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA UNIT COMMA REAL COMMA UNIT COMMA NAT COMMA ID checksum
@@ -144,7 +153,7 @@ nmea_gpgga_sentence:
     })}
 
 /* $GPRMC,083344.00,V,,,,,,,090520,,,N*7B */
-nmea_gprmc_sentence:
+nmea_rmc_sentence:
   | REAL COMMA UNIT COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW checksum
     { Sentence.({
         time = Sentence.datetime_to_unix $11 @@ int_of_float $1;

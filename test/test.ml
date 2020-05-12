@@ -1,6 +1,6 @@
 open OUnit2;;
 
-let parse_data = [
+let gp_data = [
   "$GPGGA,100412.326,5231.139,N,01324.930,E,1,12,1.0,0.0,M,0.0,M,,*6F";
   "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47";
   "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30";
@@ -29,9 +29,9 @@ let parse_data = [
   "$GPGSV,3,3,10,31,01,310,,32,35,289,29*76"
 ];;
 
-let gpgll_cord_test s c octx = 
+let gll_cord_test s c octx = 
   match Nmea.Parse.parse s with 
-    GPGLL(s) -> assert_equal (Nmea.Coord.eq s.coord c) true
+    GLL(s) -> assert_equal (Nmea.Coord.eq s.coord c) true
   | _ -> assert_equal false true
 ;;
 
@@ -52,7 +52,7 @@ let rec loop_parse ch n octx = if n = 0 then () else
 
 let suite = "nmea" >::: [] 
   @ [ "stream" >:: loop_parse (open_in "test/data.txt") 6 ]
-  @ [ "gpgll_coord" >:: gpgll_cord_test "$GPGLL,3013.09137,N,00908.43818,E,075602.00,A,A*6C" ((30.218190,N), (9.140636,E))]
-  @ List.mapi (fun i x -> (Printf.sprintf "parse_test.%d" i) >:: parse_test x) parse_data;;
+  @ [ "gll_coord" >:: gll_cord_test "$GPGLL,3013.09137,N,00908.43818,E,075602.00,A,A*6C" ((30.218190,N), (9.140636,E))]
+  @ List.mapi (fun i x -> (Printf.sprintf "parse_gp_test.%d" i) >:: parse_test x) gp_data;;
 
 let () = run_test_tt_main suite;;

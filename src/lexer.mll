@@ -31,11 +31,17 @@ rule token = parse
   (* { STATUS true } *)
 
   | '$'                         { SPREFIX }
-  | "GPGGA"                     { GPGGA }
-  | "GPRMC"                     { GPRMC }
-  | "GPGLL"                     { GPGLL }
-  | "GPGSV"                     { GPGSV }
-  | "GPGSA"                     { GPGSA }
+  | '!'                         { APREFIX }
+  | "GP"						{ GP }
+  | "GGA"                     	{ GGA }
+  | "RMC"                     	{ RMC }
+  | "GLL"                     	{ GLL }
+  | "GSV"                     	{ GSV }
+  | "GSA"                     	{ GSA }
+
+  | "AI"						{ AI }
+  | "VDM"              			{ VDM }
+  | "VDO"                     	{ VDO }
 
   | '/'                         { SLASH }
   | ','                         { COMMA }

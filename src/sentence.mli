@@ -1,7 +1,7 @@
 exception Invalid_sentence
 type mag_var = float * Coord.ew
 
-type gpgga = {
+type gga = {
   time: float;
   coord: Coord.t;
   quality: int;
@@ -12,13 +12,13 @@ type gpgga = {
   station_id: string;
 }
 
-type gpgll = {
+type gll = {
   time: float;
   coord: Coord.t;
   status: bool;
 }
 
-type gprmc = {
+type rmc = {
   time: float;
   coord: Coord.t;
   sog: float;
@@ -34,14 +34,14 @@ type sat = {
   snr_db: int;
 }
 
-type gpgsv = {
+type gsv = {
   msg_n: int;
   msg_i: int;
   sv_n: int;
   sats: sat list;
 }
 
-type gpgsa = {
+type gsa = {
   auto: bool;
   fix: int;
   prns: int list;
@@ -50,7 +50,7 @@ type gpgsa = {
   vdop: float;
 }
 
-type t = GPGLL of gpgll | GPGGA of gpgga | GPRMC of gprmc | GPGSV of gpgsv | GPGSA of gpgsa
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa
 (** sentence type *)
 
 val to_string: t -> string

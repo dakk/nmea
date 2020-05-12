@@ -12,7 +12,7 @@ let next ch = parse_opt @@ input_line ch;;
 
 let next_coord ch = 
   match next ch with
-  | Some(GPGGA (s)) -> Some(s.coord)
-  | Some(GPRMC (s)) -> Some(s.coord)
+  | Some(GGA (s)) -> Some(s.coord)
+  | Some(RMC (s)) -> Some(s.coord)
   | _ -> None
 ;;
