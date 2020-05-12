@@ -30,7 +30,7 @@ let parse_data = [
 
 let gpgll_cord_test s c octx = 
   match Nmea.Parse.parse s with 
-    GPGLL(s) -> assert_equal (Nmea.Coord.to_string s.coord) (Nmea.Coord.to_string c)
+    GPGLL(s) -> assert_equal (Nmea.Coord.eq s.coord c) true
   | _ -> assert_equal false true
 ;;
 

@@ -14,13 +14,6 @@ let dm_to_d v =
 let parse_lat v ns = (dm_to_d v, ns);;
 let parse_lng v ew = (dm_to_d v, ew);;
 
-let eq c c' = 
-	(((c |> fst |> fst) *. 1000.) |> int_of_float) = (((c' |> fst |> fst) *. 1000.) |> int_of_float) &&
-	(c |> snd |> fst) = (c' |> snd |> fst) &&
-	(((c |> snd |> fst) *. 1000.) |> int_of_float) = (((c' |> snd |> fst) *. 1000.) |> int_of_float) &&
-	(c |> snd |> snd) = (c' |> snd |> snd)
-;;
-
 let lat = fst;;
 let lng = snd;;
 
@@ -35,3 +28,5 @@ let to_string c =
   Printf.sprintf "%f %c %f %c" (lat c |> fst) (lat c |> snd |> nstos) 
     (lng c |> fst) (lng c |> snd |> ewtos)
 ;;
+
+let eq c c' = (to_string c) = (to_string c');;
