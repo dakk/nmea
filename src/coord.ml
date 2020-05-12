@@ -7,12 +7,19 @@ type t = lat * lng;;
 
 let dm_to_d v = 
   let dgr = floor @@ v /. 100. in
-  let min = v -. (dgr *. 100.) *. (1.0 /. 60.) in 
+  let min = (v -. (dgr *. 100.)) *. (1.0 /. 60.) in 
   dgr +. min
 ;;
 
 let parse_lat v ns = (dm_to_d v, ns);;
 let parse_lng v ew = (dm_to_d v, ew);;
+
+let eq c c' = 
+	(((c |> fst |> fst) *. 1000.) |> int_of_float) = (((c' |> fst |> fst) *. 1000.) |> int_of_float) &&
+	(c |> snd |> fst) = (c' |> snd |> fst) &&
+	(((c |> snd |> fst) *. 1000.) |> int_of_float) = (((c' |> snd |> fst) *. 1000.) |> int_of_float) &&
+	(c |> snd |> snd) = (c' |> snd |> snd)
+;;
 
 let lat = fst;;
 let lng = snd;;

@@ -6,6 +6,9 @@ type lng = float * ew
 type t = lat * lng
 (** latlng type *)
 
+val eq : t -> t -> bool
+(** [eq c c'] returns true if c = c' *)
+
 val lat : t -> lat
 (** [lat ll] returns longitude *)
 

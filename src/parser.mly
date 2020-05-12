@@ -69,9 +69,16 @@ nmea_gpgsv_sentence:
 
 /* $GPGLL,4916.45,N,12311.12,W,225444,A*32 */
 /* $GPGLL,,,,,082031.00,V,N*42 */
+/* $GPGLL,3913.09137,N,00908.43818,E,075602.00,A,A*6C */
 nmea_gpgll_sentence:
   /* coord       time       status*/
   | coords COMMA REAL COMMA UNIT checksum
+    { Sentence.({
+        time = Sentence.time_to_unix @@ int_of_float $3;
+        status = $5 = "A";
+        coord = $1;
+    })}
+  | coords COMMA REAL COMMA UNIT COMMA UNIT checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $3;
         status = $5 = "A";
@@ -139,6 +146,16 @@ nmea_gprmc_sentence:
         sog = $7;
         cmg = $9;
         mag_var = Coord.parse_lng $13 $15;
+    })}
+	/* $GPRMC,082538.00,A,3913.08527,N,00908.43682,E,0.807,,120520,,,A*75 */
+  | REAL COMMA UNIT COMMA coords COMMA REAL COMMA COMMA NAT COMMA COMMA COMMA UNIT checksum
+    { Sentence.({
+        time = Sentence.datetime_to_unix $10 @@ int_of_float $1;
+        status = $3 = "A";
+        coord = $5;
+        sog = $7;
+        cmg = 0.0;
+        mag_var = (0.0, E);
     })}
   | REAL COMMA UNIT COMMA coords COMMA COMMA COMMA NAT COMMA COMMA COMMA checksum
     { Sentence.({
