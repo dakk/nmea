@@ -49,21 +49,28 @@ nmea_gpgsv_sentence:
         msg_n = $1;
         msg_i = $3;
         sv_n = $5;
+        sats = [ $7; $9; $11; $13 ];
+    })}
+  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA sat_info COMMA? COMMA? COMMA? COMMA? checksum
+    { Sentence.({
+        msg_n = $1;
+        msg_i = $3;
+        sv_n = $5;
         sats = [ $7; $9; $11 ];
     })}
-  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA sat_info COMMA COMMA COMMA COMMA checksum
+  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA? COMMA? COMMA? COMMA? COMMA? COMMA? COMMA? COMMA? checksum
     { Sentence.({
         msg_n = $1;
         msg_i = $3;
         sv_n = $5;
         sats = [ $7; $9 ];
     })}
-  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA sat_info COMMA COMMA COMMA COMMA COMMA COMMA COMMA COMMA checksum
+  | NAT COMMA NAT COMMA NAT COMMA sat_info COMMA?  COMMA? COMMA? COMMA? COMMA? COMMA? COMMA? COMMA? COMMA? checksum
     { Sentence.({
         msg_n = $1;
         msg_i = $3;
         sv_n = $5;
-        sats = [ $7 ];
+        sats = [ $7; ];
     })}
 
 
