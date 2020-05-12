@@ -37,6 +37,7 @@ rule token = parse
 
   | "HCHDT"						{ HDT }
   | "HCHDM"						{ HDM }
+  | "HCHDG"						{ HDG }
 
   | "GPGGA"                    	{ GGA }
   | "GPRMC"                    	{ RMC }

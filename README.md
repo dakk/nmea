@@ -24,11 +24,12 @@ in loop_coord (open_in "/dev/ttyACM0");;
 - --GSA: GPS DOP and active satellites
 - --HDT: true heading
 - --HDM: magnetic heading
+- --HDG: magnetic heading, deviation and variation
 
 ## Roadmap
 
 1. ~~GPS related sentences~~
-2. Heading related sentences
+2. ~~Heading related sentences~~
 3. Wind related sentences
 4. WP related sentences
 5. AIS related sentences

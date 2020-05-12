@@ -1,7 +1,9 @@
 open OUnit2;;
 
 let hc_data = [
-	"$HCHDT,271.1,T*2C"
+	"$HCHDT,271.1,T*2C";
+	"$HCHDG,85.5,0.0,E,0.0,E*77";
+	"$HCHDG,000.00,,,,*77"
 ];;
 
 let gp_data = [

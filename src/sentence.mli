@@ -1,5 +1,6 @@
 exception Invalid_sentence
 type mag_var = float * Coord.ew
+type mag_dev = float * Coord.ew
 
 type gga = {
   time: float;
@@ -50,7 +51,13 @@ type gsa = {
   vdop: float;
 }
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float
+type hdg = {
+	hdg: float;
+	mag_dev: mag_dev;
+	mag_var: mag_var;
+}
+
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float | HDG of hdg
 (** sentence type *)
 
 val to_string: t -> string

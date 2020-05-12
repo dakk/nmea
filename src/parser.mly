@@ -10,7 +10,7 @@
 
 %token GGA RMC GLL GSV GSA GP
 %token VDM VDO
-%token HDT HDM
+%token HDT HDM HDG
 %token COMMA STAR SLASH
 %token SPREFIX APREFIX EOL
 
@@ -26,6 +26,7 @@ sentence:
   | SPREFIX GSA COMMA nmea_gsa_sentence EOL    { Sentence.GSA $4 }
   | SPREFIX HDT COMMA nmea_hdtm_sentence EOL   { Sentence.HDT $4 }
   | SPREFIX HDM COMMA nmea_hdtm_sentence EOL   { Sentence.HDM $4 }
+  | SPREFIX HDG COMMA nmea_hdg_sentence EOL    { Sentence.HDG $4 }
 
 //   | APREFIX AI VDM COMMA nmea_vdm_sentence EOL   { Sentence.AIVDM $4 }
 //   | APREFIX AI VDO COMMA nmea_vdo_sentence EOL   { Sentence.AIVDO $4 }
@@ -40,6 +41,23 @@ sentence:
 nmea_hdtm_sentence:
   | REAL COMMA UNIT checksum 
 	{ $1 }
+
+// $HCHDG,85.5,0.0,E,0.0,E*77
+// HCHDG,000.00,,,,*77
+nmea_hdg_sentence:
+  | REAL COMMA REAL COMMA EW COMMA REAL COMMA EW checksum 
+	{ Sentence.({
+	  hdg = $1;
+	  mag_dev = Coord.parse_lng $3 $5;
+      mag_var = Coord.parse_lng $7 $9;
+	})}
+  | REAL COMMA COMMA COMMA COMMA checksum 
+	{ Sentence.({
+	  hdg = $1;
+	  mag_dev = (0.0, E);
+      mag_var = (0.0, E);
+	})}
+
 
 nmea_gsa_sentence:
 /* "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30"; */

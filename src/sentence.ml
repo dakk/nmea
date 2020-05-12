@@ -1,5 +1,6 @@
 exception Invalid_sentence;;
 type mag_var = float * Coord.ew;;
+type mag_dev = float * Coord.ew;;
 
 type gga = {
   time: float;
@@ -50,16 +51,23 @@ type gsa = {
   vdop: float;
 };;
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float;;
+type hdg = {
+	hdg: float;
+	mag_dev: mag_dev;
+	mag_var: mag_var;
+};;
+
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float | HDG of hdg;;
 
 let to_string s = match s with 
 | GLL s -> Printf.sprintf "GLL(%s)" (Coord.to_string s.coord);
 | GGA s -> Printf.sprintf "GGA(%s)" (Coord.to_string s.coord);
 | RMC s -> Printf.sprintf "RMC(%s)" (Coord.to_string s.coord);
-| GSV s -> Printf.sprintf "GSV()"
-| GSA s -> Printf.sprintf "GSA()"
+| GSV _ -> Printf.sprintf "GSV()"
+| GSA _ -> Printf.sprintf "GSA()"
 | HDT s -> Printf.sprintf "HDT(%f)" s
 | HDM s -> Printf.sprintf "HDM(%f)" s
+| HDG s -> Printf.sprintf "HDG(%f)" s.hdg
 ;;
 
 let time_to_unix t =
