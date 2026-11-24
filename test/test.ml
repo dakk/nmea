@@ -60,8 +60,8 @@ let rec loop_parse ch n octx = if n = 0 then () else
   | Some(_) -> assert(true); loop_parse ch (n-1) octx
 ;;
 
-let suite = "nmea" >::: [] 
-  @ [ "stream" >:: loop_parse (open_in "test/data.txt") 6 ]
+let suite = "nmea" >::: []
+  @ [ "stream" >:: loop_parse (open_in "data.txt") 6 ]
   @ [ "gll_coord" >:: gll_cord_test "$GPGLL,3013.09137,N,00908.43818,E,075602.00,A,A*6C" ((30.218190,N), (9.140636,E))]
   @ List.mapi (fun i x -> (Printf.sprintf "parse_gp_test.%d" i) >:: parse_test x) gp_data
   @ List.mapi (fun i x -> (Printf.sprintf "parse_hc_test.%d" i) >:: parse_test x) hc_data
