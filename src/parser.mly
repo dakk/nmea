@@ -8,6 +8,9 @@
 %token <Coord.ew> EW
 %token <string> UNIT
 
+%token <Sentence.channel_t> CHANNEL
+%token <string> PAYLOAD
+
 %token GGA RMC GLL GSV GSA GP
 %token ZDA
 %token VDM VDO
@@ -29,8 +32,7 @@ sentence:
   | SPREFIX HDM COMMA nmea_hdtm_sentence EOL   { Sentence.HDM $4 }
   | SPREFIX HDG COMMA nmea_hdg_sentence EOL    { Sentence.HDG $4 }
   | SPREFIX ZDA COMMA nmea_zda_sentence EOL    { Sentence.ZDA $4 }
-
-//   | APREFIX AI VDM COMMA nmea_vdm_sentence EOL   { Sentence.AIVDM $4 }
+  | APREFIX VDM COMMA nmea_vdm_sentence EOL    { Sentence.VDM $4 }
 //   | APREFIX AI VDO COMMA nmea_vdo_sentence EOL   { Sentence.AIVDO $4 }
 
 // nmea_avidm_sentence:
@@ -43,7 +45,7 @@ sentence:
 
 // "$GPZDA,172809.456,12,07,1996,00,00*45"
 nmea_zda_sentence:
-  | REAL COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT checksum 
+  | REAL COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT checksum
 	{ Sentence.({
 		tz = $3;
 		time = Sentence.datetime_to_unix2 $5 $7 $9 @@ int_of_float $1;
@@ -51,19 +53,19 @@ nmea_zda_sentence:
 
 // $HCHDT,271.1,T*2C
 nmea_hdtm_sentence:
-  | REAL COMMA UNIT checksum 
+  | REAL COMMA UNIT checksum
 	{ $1 }
 
 // $HCHDG,85.5,0.0,E,0.0,E*77
 // HCHDG,000.00,,,,*77
 nmea_hdg_sentence:
-  | REAL COMMA REAL COMMA EW COMMA REAL COMMA EW checksum 
+  | REAL COMMA REAL COMMA EW COMMA REAL COMMA EW checksum
 	{ Sentence.({
 	  hdg = $1;
 	  mag_dev = Coord.parse_lng $3 $5;
       mag_var = Coord.parse_lng $7 $9;
 	})}
-  | REAL COMMA COMMA COMMA COMMA checksum 
+  | REAL COMMA COMMA COMMA COMMA checksum
 	{ Sentence.({
 	  hdg = $1;
 	  mag_dev = (0.0, E);
@@ -74,7 +76,7 @@ nmea_hdg_sentence:
 nmea_gsa_sentence:
 /* "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30"; */
   | UNIT COMMA NAT COMMA
-    NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA 
+    NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA
     REAL COMMA REAL COMMA REAL checksum
     { Sentence.({
       auto = ($1 = "A");
@@ -86,7 +88,7 @@ nmea_gsa_sentence:
     })}
 
 
-sat_info: 
+sat_info:
   | NAT COMMA NAT COMMA NAT COMMA NAT { (Sentence.({ prn = $1; elev_dgr = $3; azimuth = $5; snr_db = $7; })) }
   | NAT COMMA NAT COMMA NAT COMMA     { (Sentence.({ prn = $1; elev_dgr = $3; azimuth = $5; snr_db = 0;  })) }
 
@@ -221,6 +223,26 @@ nmea_rmc_sentence:
         mag_var = (0.0, E);
     })}
 
+/* !AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C */
+nmea_vdm_sentence:
+    | NAT COMMA NAT COMMA COMMA CHANNEL COMMA PAYLOAD COMMA NAT checksum
+        { Sentence.({
+            fragments = $1;
+            fragment = $3;
+            id = None;
+            channel = $6;
+            payload = $8;
+            padding = $10;
+        })}
+    | NAT COMMA NAT COMMA NAT COMMA CHANNEL COMMA PAYLOAD COMMA NAT checksum
+        { Sentence.({
+            fragments = $1;
+            fragment = $3;
+            id = Some $5;
+            channel = $7;
+            payload = $9;
+            padding = $11;
+        })}
 
 checksum:
   | COMMA? NS? STAR HEX  { $4 }
