@@ -1,6 +1,7 @@
 (library
  (public_name nmea)
  (name nmea)
+ (libraries unix)
  (modules ("coord" "parse" "sentence" "parser" "lexer")))
 
 (ocamllex lexer)

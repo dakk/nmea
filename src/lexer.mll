@@ -12,6 +12,9 @@ let nat = '-'? (((((((digit? digit)? digit)? digit)? digit)? digit)? digit)? dig
 let hexit = digit | ['A'-'F']
 let hex = hexit hexit
 
+let sixbitchar = ['0'-'W'] | ['`' - 'w']
+let sixbitstring = sixbitchar+
+
 rule token = parse
   | nat                         { NAT (int_of_string (Lexing.lexeme lexbuf)) }
   | real                        { REAL (float_of_string (Lexing.lexeme lexbuf)) }
@@ -23,10 +26,10 @@ rule token = parse
   | 'E'                         { EW E }
   | 'W'                         { EW W }
   | 'M'                         { UNIT (Lexing.lexeme lexbuf) }
-  | 'A'                         { UNIT (Lexing.lexeme lexbuf) } 
-  | 'V'                         { UNIT (Lexing.lexeme lexbuf) }
   | 'V'                         { UNIT (Lexing.lexeme lexbuf) }
   | 'T'                         { UNIT (Lexing.lexeme lexbuf) }
+  | 'A'                         { LETTER_A }
+  | 'B'                         { CHANNEL B }
 
   | '$'                         { SPREFIX }
   | '!'                         { APREFIX }
@@ -53,5 +56,7 @@ rule token = parse
   | '/'                         { SLASH }
   | ','                         { COMMA }
   | "\r\n"? | '\n'?             { new_line lexbuf ; EOL }
+
+  | sixbitstring                { PAYLOAD (Lexing.lexeme lexbuf) }
 
   | _ as c                      { failwith (Format.sprintf "invalid string starting with %C" c) }

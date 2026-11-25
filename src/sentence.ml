@@ -2,6 +2,8 @@ exception Invalid_sentence;;
 type mag_var = float * Coord.ew;;
 type mag_dev = float * Coord.ew;;
 
+type channel_t = A | B
+
 type gga = {
   time: float;
   coord: Coord.t;
@@ -62,10 +64,19 @@ type zda = {
 	tz: int;
 }
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float 
-	| HDG of hdg | ZDA of zda;;
+type vdm = {
+  fragments: int;
+  fragment: int;
+  id: int option;
+  channel: channel_t;
+  payload: string;
+  padding: int;
+}
 
-let to_string s = match s with 
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float
+	| HDG of hdg | ZDA of zda | VDM of vdm;;
+
+let to_string s = match s with
 | GLL s -> Printf.sprintf "GLL(%s)" (Coord.to_string s.coord);
 | GGA s -> Printf.sprintf "GGA(%s)" (Coord.to_string s.coord);
 | RMC s -> Printf.sprintf "RMC(%s)" (Coord.to_string s.coord);
@@ -75,25 +86,26 @@ let to_string s = match s with
 | HDM s -> Printf.sprintf "HDM(%f)" s
 | HDG s -> Printf.sprintf "HDG(%f)" s.hdg
 | ZDA s -> Printf.sprintf "HDG(%f, %d)" s.time s.tz
+| VDM s -> Printf.sprintf "VDM(%d of %d, %s, %s)" s.fragment s.fragments (match s.channel with A -> "A" | B -> "B") s.payload
 ;;
 
 let time_to_unix t =
   let tm = Unix.time () |> Unix.localtime in
   let hour = t / 10000 in
   let min = (t / 100) - (hour * 100) in
-  let sec = t - (hour * 10000) - (min * 100) in 
+  let sec = t - (hour * 10000) - (min * 100) in
   { tm with tm_hour= hour; tm_min= min; tm_sec= sec } |> Unix.mktime |> fst
 ;;
 
-let datetime_to_unix d t = 
+let datetime_to_unix d t =
   let tm = time_to_unix t |> Unix.localtime in
   let day = d / 10000 in
   let month = d / 100 - (day * 100) in
-  let year = d - (day * 10000) - (month * 100) in 
+  let year = d - (day * 10000) - (month * 100) in
   { tm with tm_mday= day; tm_mon= month; tm_year= 2000 + year } |> Unix.mktime |> fst
 ;;
 
-let datetime_to_unix2 day month year t = 
+let datetime_to_unix2 day month year t =
   let tm = time_to_unix t |> Unix.localtime in
   { tm with tm_mday= day; tm_mon= month; tm_year= year } |> Unix.mktime |> fst
 ;;

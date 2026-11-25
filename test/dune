@@ -1,5 +1,6 @@
-(executable
+(test
  (name test)
+ (deps data.txt)
  (libraries oUnit nmea)
  (modules ("test")))
 

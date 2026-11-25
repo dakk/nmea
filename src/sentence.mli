@@ -2,6 +2,8 @@ exception Invalid_sentence
 type mag_var = float * Coord.ew
 type mag_dev = float * Coord.ew
 
+type channel_t = A | B
+
 type gga = {
   time: float;
   coord: Coord.t;
@@ -62,8 +64,17 @@ type zda = {
 	tz: int;
 }
 
-type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float 
-	| HDG of hdg | ZDA of zda
+type vdm = {
+  fragments: int;
+  fragment: int;
+  id: int option;
+  channel: channel_t;
+  payload: string;
+  padding: int;
+}
+
+type t = GLL of gll | GGA of gga | RMC of rmc | GSV of gsv | GSA of gsa | HDT of float | HDM of float
+	| HDG of hdg | ZDA of zda | VDM of vdm
 (** sentence type *)
 
 val to_string: t -> string

@@ -22,7 +22,7 @@ let gp_data = [
   "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30";
   "$GPRMC,100414.326,A,5231.478,N,01324.307,E,1502.9,029.2,100520,000.0,W*43";
   "$GPGSV,2,1,08,02,22,112,,10,02,264,,12,72,328,,15,14,177,*7E";
-  "$GPGSV,2,2,08,17,04,036,,19,23,043,,24,70,107,,25,48,276,*77";  
+  "$GPGSV,2,2,08,17,04,036,,19,23,043,,24,70,107,,25,48,276,*77";
   "$GPGSV,3,1,11,03,03,111,00,04,15,270,00,06,01,010,00,13,06,292,00*74";
   "$GPGSV,3,2,11,14,25,170,00,16,57,208,39,18,67,296,40,19,40,246,00*74";
   "$GPGSV,3,3,11,22,42,067,42,24,14,311,43,27,05,244,00,,,,*4D";
@@ -39,18 +39,25 @@ let gp_data = [
   "$GPGSV,3,3,10,31,01,310,,32,35,289,29*76"
 ];;
 
-let gll_cord_test s c octx = 
-  match Nmea.Parse.parse s with 
+let ai_data = [
+  "!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C";
+  "!AIVDM,1,1,,A,402=ahQvbt`kCOj56nNUvPW008;f,0*1A";
+  "!AIVDM,2,1,6,B,53P><k4000038UQS>20q<j0EP<4hT9E:2222220`1`6435?=03kClm6C,0*53";
+  "!AIVDM,2,2,6,B,clQUickClm6C`80,2*24";
+];;
+
+let gll_cord_test s c octx =
+  match Nmea.Parse.parse s with
     GLL(s) -> assert_equal (Nmea.Coord.eq s.coord c) true
   | _ -> assert_equal false true
 ;;
 
 let parse_fail_test s octx =
-  try Nmea.Parse.parse s |> ignore; assert_equal true false 
+  try Nmea.Parse.parse s |> ignore; assert_equal true false
   with | _ -> assert_equal true true
 ;;
 
-let parse_test s octx = 
+let parse_test s octx =
   Nmea.Parse.parse s |> ignore; assert_equal true true
 ;;
 
@@ -60,11 +67,12 @@ let rec loop_parse ch n octx = if n = 0 then () else
   | Some(_) -> assert(true); loop_parse ch (n-1) octx
 ;;
 
-let suite = "nmea" >::: [] 
-  @ [ "stream" >:: loop_parse (open_in "test/data.txt") 6 ]
+let suite = "nmea" >::: []
+  @ [ "stream" >:: loop_parse (open_in "data.txt") 6 ]
   @ [ "gll_coord" >:: gll_cord_test "$GPGLL,3013.09137,N,00908.43818,E,075602.00,A,A*6C" ((30.218190,N), (9.140636,E))]
   @ List.mapi (fun i x -> (Printf.sprintf "parse_gp_test.%d" i) >:: parse_test x) gp_data
   @ List.mapi (fun i x -> (Printf.sprintf "parse_hc_test.%d" i) >:: parse_test x) hc_data
-  @ List.mapi (fun i x -> (Printf.sprintf "parse_tm_test.%d" i) >:: parse_test x) tm_data;;
+  @ List.mapi (fun i x -> (Printf.sprintf "parse_tm_test.%d" i) >:: parse_test x) tm_data
+  @ List.mapi (fun i x -> (Printf.sprintf "parse_ai_test.%d" i) >:: parse_test x) ai_data;;
 
 let () = run_test_tt_main suite;;
