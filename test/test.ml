@@ -41,6 +41,7 @@ let gp_data = [
 
 let ai_data = [
   "!AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C";
+  "!AIVDM,1,1,,A,402=ahQvbt`kCOj56nNUvPW008;f,0*1A";
   "!AIVDM,2,1,6,B,53P><k4000038UQS>20q<j0EP<4hT9E:2222220`1`6435?=03kClm6C,0*53";
   "!AIVDM,2,2,6,B,clQUickClm6C`80,2*24";
 ];;

@@ -26,10 +26,9 @@ rule token = parse
   | 'E'                         { EW E }
   | 'W'                         { EW W }
   | 'M'                         { UNIT (Lexing.lexeme lexbuf) }
-  | 'A'                         { UNIT (Lexing.lexeme lexbuf) }
   | 'V'                         { UNIT (Lexing.lexeme lexbuf) }
   | 'T'                         { UNIT (Lexing.lexeme lexbuf) }
-  | 'A'                         { CHANNEL A }
+  | 'A'                         { LETTER_A }
   | 'B'                         { CHANNEL B }
 
   | '$'                         { SPREFIX }

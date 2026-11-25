@@ -8,6 +8,8 @@
 %token <Coord.ew> EW
 %token <string> UNIT
 
+%token LETTER_A
+
 %token <Sentence.channel_t> CHANNEL
 %token <string> PAYLOAD
 
@@ -21,6 +23,14 @@
 %start <Sentence.t> sentence
 
 %%
+
+unit:
+    | u = UNIT { u }
+    | LETTER_A { "A" }
+
+channel:
+    | c = CHANNEL { c }
+    | LETTER_A { Sentence.A }
 
 sentence:
   | SPREFIX GGA COMMA nmea_gga_sentence EOL    { Sentence.GGA $4 }
@@ -53,7 +63,7 @@ nmea_zda_sentence:
 
 // $HCHDT,271.1,T*2C
 nmea_hdtm_sentence:
-  | REAL COMMA UNIT checksum
+  | REAL COMMA unit checksum
 	{ $1 }
 
 // $HCHDG,85.5,0.0,E,0.0,E*77
@@ -75,7 +85,7 @@ nmea_hdg_sentence:
 
 nmea_gsa_sentence:
 /* "$GPGSA,A,3,01,02,03,04,05,06,07,08,09,10,11,12,1.0,1.0,1.0*30"; */
-  | UNIT COMMA NAT COMMA
+  | unit COMMA NAT COMMA
     NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA NAT COMMA
     REAL COMMA REAL COMMA REAL checksum
     { Sentence.({
@@ -128,13 +138,13 @@ nmea_gsv_sentence:
 /* $GPGLL,3913.09137,N,00908.43818,E,075602.00,A,A*6C */
 nmea_gll_sentence:
   /* coord       time       status*/
-  | coords COMMA REAL COMMA UNIT checksum
+  | coords COMMA REAL COMMA unit checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $3;
         status = $5 = "A";
         coord = $1;
     })}
-  | coords COMMA REAL COMMA UNIT COMMA UNIT checksum
+  | coords COMMA REAL COMMA unit COMMA unit checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $3;
         status = $5 = "A";
@@ -144,7 +154,7 @@ nmea_gll_sentence:
 nmea_gga_sentence:
   /* "$GPGGA,134658.00,5106.9792,N,11402.3003,W,2,09,1.0,1048.47,M,-16.27,M,08,AAAA*60" */
   /* time      coord        quality   sat_n     hdop       alt        M       geoid      M       -          - */
-  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA UNIT COMMA REAL COMMA UNIT COMMA NAT COMMA ID checksum
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA unit COMMA REAL COMMA unit COMMA NAT COMMA ID checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $1;
         coord = $3;
@@ -156,7 +166,7 @@ nmea_gga_sentence:
         station_id = "";
     })}
   /* "$GPGGA,100412.326,5231.139,N,01324.930,E,1,12,1.0,0.0,M,0.0,M,,*6F" */
-  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA UNIT COMMA REAL COMMA UNIT COMMA COMMA checksum
+  | REAL COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA unit COMMA REAL COMMA unit COMMA COMMA checksum
     { Sentence.({
         time = Sentence.time_to_unix @@ int_of_float $1;
         coord = $3;
@@ -168,7 +178,7 @@ nmea_gga_sentence:
         station_id = "";
     })}
   /* "$GPGGA,123519,4807.038,N,01131.000,E,1,08,0.9,545.4,M,46.9,M,,*47" */
-  | NAT COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA UNIT COMMA REAL COMMA UNIT COMMA COMMA checksum
+  | NAT COMMA coords COMMA NAT COMMA NAT COMMA REAL COMMA REAL COMMA unit COMMA REAL COMMA unit COMMA COMMA checksum
     { Sentence.({
         time = Sentence.time_to_unix $1;
         coord = $3;
@@ -194,7 +204,7 @@ nmea_gga_sentence:
 
 /* $GPRMC,083344.00,V,,,,,,,090520,,,N*7B */
 nmea_rmc_sentence:
-  | REAL COMMA UNIT COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW checksum
+  | REAL COMMA unit COMMA coords COMMA REAL COMMA REAL COMMA NAT COMMA REAL COMMA EW checksum
     { Sentence.({
         time = Sentence.datetime_to_unix $11 @@ int_of_float $1;
         status = $3 = "A";
@@ -204,7 +214,7 @@ nmea_rmc_sentence:
         mag_var = Coord.parse_lng $13 $15;
     })}
 	/* $GPRMC,082538.00,A,3913.08527,N,00908.43682,E,0.807,,120520,,,A*75 */
-  | REAL COMMA UNIT COMMA coords COMMA REAL COMMA COMMA NAT COMMA COMMA COMMA UNIT checksum
+  | REAL COMMA unit COMMA coords COMMA REAL COMMA COMMA NAT COMMA COMMA COMMA unit checksum
     { Sentence.({
         time = Sentence.datetime_to_unix $10 @@ int_of_float $1;
         status = $3 = "A";
@@ -213,7 +223,7 @@ nmea_rmc_sentence:
         cmg = 0.0;
         mag_var = (0.0, E);
     })}
-  | REAL COMMA UNIT COMMA coords COMMA COMMA COMMA NAT COMMA COMMA COMMA checksum
+  | REAL COMMA unit COMMA coords COMMA COMMA COMMA NAT COMMA COMMA COMMA checksum
     { Sentence.({
         time = Sentence.datetime_to_unix $9 (int_of_float $1);
         status = $3 = "A";
@@ -225,7 +235,7 @@ nmea_rmc_sentence:
 
 /* !AIVDM,1,1,,B,177KQJ5000G?tO`K>RA1wUbN0TKH,0*5C */
 nmea_vdm_sentence:
-    | NAT COMMA NAT COMMA COMMA CHANNEL COMMA PAYLOAD COMMA NAT checksum
+    | NAT COMMA NAT COMMA COMMA channel COMMA PAYLOAD COMMA NAT checksum
         { Sentence.({
             fragments = $1;
             fragment = $3;
@@ -234,7 +244,7 @@ nmea_vdm_sentence:
             payload = $8;
             padding = $10;
         })}
-    | NAT COMMA NAT COMMA NAT COMMA CHANNEL COMMA PAYLOAD COMMA NAT checksum
+    | NAT COMMA NAT COMMA NAT COMMA channel COMMA PAYLOAD COMMA NAT checksum
         { Sentence.({
             fragments = $1;
             fragment = $3;
